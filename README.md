@@ -20,13 +20,37 @@ bin/herd.sh                  thin wrapper: spawn | split | await | read (parses 
 test/
   validate.sh                end-to-end validation: orchestrates agents in an isolated workspace, asserts 24 checks
   sim-agent.sh               a stand-in agent used by the validation
+install.sh                   agnostic installer (macOS/Linux/WSL): --target / --dir / --list
+install.ps1                  agnostic installer (Windows PowerShell)
 ```
 
 ## Install
 
-- **OMP / directory-based loaders:** copy this repo into your skills directory as `herdr/` (so `skill://herdr` resolves). The skill name comes from the `name:` field in `SKILL.md` frontmatter.
-- **`skills` CLI (global):** `npx skills add Sebastiangmz/herdr-skill --skill herdr -g`
-- **Manual:** paste `SKILL.md` into your agent's global instructions and keep `references/` + `bin/` alongside.
+### One-line installer (recommended)
+
+Download- and harness-agnostic. Pick your target; it fetches the skill and drops it in the right place.
+
+**macOS / Linux / WSL:**
+
+```bash
+# interactive picker:
+curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.sh | sh
+# or non-interactive, choose a target:
+curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.sh | sh -s -- --target claude --yes
+```
+
+**Windows (PowerShell):**
+
+```powershell
+iex "& { $(irm https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.ps1) } -Target claude -Yes"
+```
+
+Targets (`--target` / `-Target`): `claude` (`~/.claude/skills`), `claude-project` (`./.claude/skills`), `omp` (`~/.omp/agent/skills`), `portable` (`~/.herdr-skill` + a paste-in instruction line for tools that don't auto-load skills). For any other SKILL.md-compatible tool, point it at your skills dir with `--dir <path>` / `-Dir <path>`. Run with `--list` / `-List` to see them, `--help` for usage.
+
+### Other ways
+
+- **`skills` CLI (global, supported agents):** `npx skills add Sebastiangmz/herdr-skill --skill herdr -g`
+- **Manual clone:** copy this repo into your skills directory as `herdr/` (so the tool resolves the `herdr` skill from `SKILL.md` frontmatter).
 
 ## Verified
 
