@@ -2,7 +2,7 @@
 
 An agent skill that teaches AI coding agents to operate the [Herdr](https://herdr.dev) terminal workspace runtime — manage sessions, workspaces, tabs and panes, and (the main use) **spawn and coordinate sub-agents inside Herdr spaces** through the `herdr` CLI over its local socket.
 
-It follows the [Anthropic Agent Skills](https://www.anthropic.com/news/skills) format (progressive disclosure: a lean `SKILL.md` plus on-demand `references/` and an executable helper in `bin/`), so it drops into any harness that loads `SKILL.md` skills (Claude Code / OMP / the `skills` CLI).
+It is a standard **[Agent Skill](https://agentskills.io)** (`SKILL.md` + optional `references/` and a `bin/` helper, with progressive disclosure). Agent Skills is an **open, cross-tool standard** — originated by Anthropic (Dec 2025), now an independent spec governed at [agentskills.io](https://agentskills.io) (Apache-2.0 / CC-BY-4.0). The same `SKILL.md` is read **without modification** by 20+ agents — Claude Code, OpenAI Codex CLI, Cursor, Gemini CLI, GitHub Copilot, Windsurf, Amp, OMP, and more — so this skill is portable, not tied to any one vendor.
 
 ## What it is for
 
@@ -45,7 +45,7 @@ curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/insta
 iex "& { $(irm https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.ps1) } -Target claude -Yes"
 ```
 
-Targets (`--target` / `-Target`): `claude` (`~/.claude/skills`), `claude-project` (`./.claude/skills`), `omp` (`~/.omp/agent/skills`), `portable` (`~/.herdr-skill` + a paste-in instruction line for tools that don't auto-load skills). For any other SKILL.md-compatible tool, point it at your skills dir with `--dir <path>` / `-Dir <path>`. Run with `--list` / `-List` to see them, `--help` for usage.
+Targets (`--target` / `-Target`): `claude` (`~/.claude/skills`), `claude-project` (`./.claude/skills`), `omp` (`~/.omp/agent/skills`), `cursor` (`./.cursor/skills`), `agents` (`./.agents/skills` — the vendor-neutral location Cursor/Codex and other Agent Skills tools read), `portable` (`~/.herdr-skill` + a paste-in instruction line, for the rare tool that still doesn't auto-load skills). For any other SKILL.md-compatible tool, point it at your skills dir with `--dir <path>` / `-Dir <path>`. Run with `--list` / `-List` to see them, `--help` for usage.
 
 ### Other ways
 
