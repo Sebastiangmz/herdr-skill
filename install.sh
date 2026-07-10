@@ -37,7 +37,9 @@ Supported targets:
   claude          Claude Code, global      -> ~/.claude/skills/herdr
   claude-project  Claude Code, this repo   -> ./.claude/skills/herdr
   omp             OMP / oh-my-pi, global   -> ~/.omp/agent/skills/herdr
-  portable        Any other tool           -> ~/.herdr-skill  (+ paste-in instructions)
+  cursor          Cursor, this repo        -> ./.cursor/skills/herdr
+  agents          Vendor-neutral, project  -> ./.agents/skills/herdr
+  portable        Tools without skills     -> ~/.herdr-skill  (+ paste-in instructions)
   --dir <path>    Any SKILL.md-compatible  -> <path>/herdr
 EOF
 }
@@ -97,15 +99,18 @@ choose_target() {
     echo "  1) Claude Code (global)   ~/.claude/skills$_c"
     echo "  2) Claude Code (project)  ./.claude/skills"
     echo "  3) OMP / oh-my-pi         ~/.omp/agent/skills$_o"
-    echo "  4) Custom skills directory (any SKILL.md tool)"
-    echo "  5) Portable + paste-in instructions (any other tool)"
-    printf 'Choice [1-5]: '
+    echo "  4) Cursor (project)       ./.cursor/skills"
+    echo "  5) Vendor-neutral (project) ./.agents/skills"
+    echo "  6) Custom skills directory (any SKILL.md tool)"
+    echo "  7) Portable + paste-in instructions (any other tool)"
+    printf 'Choice [1-7]: '
   } >&2
   read _c </dev/tty
   case "$_c" in
     1) TARGET=claude;; 2) TARGET=claude-project;; 3) TARGET=omp;;
-    4) printf 'Skills directory path: ' >&2; read DIR </dev/tty; TARGET=dir;;
-    5) TARGET=portable;;
+    4) TARGET=cursor;; 5) TARGET=agents;;
+    6) printf 'Skills directory path: ' >&2; read DIR </dev/tty; TARGET=dir;;
+    7) TARGET=portable;;
     *) die "invalid choice";;
   esac
 }
@@ -130,6 +135,8 @@ case "$TARGET" in
   claude)          ROOT="$HOME/.claude/skills";;
   claude-project)  ROOT="$PWD/.claude/skills";;
   omp)             ROOT="$HOME/.omp/agent/skills";;
+  cursor)          ROOT="$PWD/.cursor/skills";;
+  agents)          ROOT="$PWD/.agents/skills";;
   dir)             [ -n "$DIR" ] || die "--dir requires a path"
                    ROOT=$(CDPATH= cd -- "$DIR" 2>/dev/null && pwd || printf '%s' "$DIR");;
   portable)        ROOT="$HOME";;   # special-cased below
@@ -162,6 +169,8 @@ case "$TARGET" in
   claude)         log "Claude Code loads it automatically as the 'herdr' skill (new session).";;
   claude-project) log "Claude Code loads it for this project (new session). Commit .claude/skills/herdr to share it.";;
   omp)            log "OMP surfaces it as skill://herdr next session.";;
+  cursor)         log "Cursor discovers it from .cursor/skills (also reads .agents/skills). Commit it to share.";;
+  agents)         log "Vendor-neutral .agents/skills — read by Cursor, Codex, and other Agent Skills tools.";;
   dir)            log "If your tool loads SKILL.md skills from that directory, it will pick up 'herdr'.";;
 esac
 log "Verify the helper: $DEST/bin/herd.sh help"
