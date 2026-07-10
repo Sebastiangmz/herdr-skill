@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-  herdr-skill installer for Windows PowerShell — download- and harness-agnostic.
+  herdr-plus installer for Windows PowerShell — download- and harness-agnostic.
 .DESCRIPTION
   Installs the `herdr` agent skill into the AI coding harness of your choice.
   Run from a checkout, or piped from GitHub:
 
-    irm https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.ps1 | iex
-    iex "& { $(irm https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.ps1) } -Target claude -Yes"
+    irm https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.ps1 | iex
+    iex "& { $(irm https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.ps1) } -Target claude -Yes"
     .\install.ps1 -Dir C:\my-tool\skills
     .\install.ps1 -List
 .PARAMETER Target
@@ -28,21 +28,21 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$Repo   = "Sebastiangmz/herdr-skill"
+$Repo   = "Sebastiangmz/herdr-plus"
 $Branch = "main"
-$Name   = "herdr"
+$Name   = "herdr-plus"
 $Zip    = "https://github.com/$Repo/archive/refs/heads/$Branch.zip"
 
 function Show-Targets {
 @"
 Supported targets:
-  claude          Claude Code, global      -> ~\.claude\skills\herdr
-  claude-project  Claude Code, this repo   -> .\.claude\skills\herdr
-  omp             OMP / oh-my-pi, global   -> ~\.omp\agent\skills\herdr
-  cursor          Cursor, this repo        -> .\.cursor\skills\herdr
-  agents          Vendor-neutral, project  -> .\.agents\skills\herdr
-  portable        Tools without skills     -> ~\.herdr-skill  (+ paste-in instructions)
-  -Dir <path>     Any SKILL.md-compatible  -> <path>\herdr
+  claude          Claude Code, global      -> ~\.claude\skills\herdr-plus
+  claude-project  Claude Code, this repo   -> .\.claude\skills\herdr-plus
+  omp             OMP / oh-my-pi, global   -> ~\.omp\agent\skills\herdr-plus
+  cursor          Cursor, this repo        -> .\.cursor\skills\herdr-plus
+  agents          Vendor-neutral, project  -> .\.agents\skills\herdr-plus
+  portable        Tools without skills     -> ~\.herdr-plus  (+ paste-in instructions)
+  -Dir <path>     Any SKILL.md-compatible  -> <path>\herdr-plus
 "@ | Write-Host
 }
 
@@ -114,7 +114,7 @@ switch ($Target) {
 }
 
 if ($Target -eq "portable") {
-  $dest = Join-Path $home ".herdr-skill"
+  $dest = Join-Path $home ".herdr-plus"
   if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
   New-Item -ItemType Directory -Path (Join-Path $dest "references") -Force | Out-Null
   New-Item -ItemType Directory -Path (Join-Path $dest "bin") -Force | Out-Null
@@ -127,7 +127,7 @@ if ($Target -eq "portable") {
   Write-Host "instructions / rules file (AGENTS.md, .cursorrules, system prompt):"
   Write-Host ""
   Write-Host "  When operating Herdr (HERDR_ENV=1) or orchestrating agents in Herdr,"
-  Write-Host "  read the skill at ~\.herdr-skill\SKILL.md and follow it."
+  Write-Host "  read the skill at ~\.herdr-plus\SKILL.md and follow it."
   exit 0
 }
 
@@ -135,10 +135,10 @@ $dest = Install-Skill $src $root
 Write-Host ""
 Write-Host "Installed the '$Name' skill at: $dest"
 switch ($Target) {
-  "claude"         { Write-Host "Claude Code loads it automatically as the 'herdr' skill (new session)." }
+  "claude"         { Write-Host "Claude Code loads it automatically as the 'herdr-plus' skill (new session)." }
   "claude-project" { Write-Host "Claude Code loads it for this project (new session)." }
-  "omp"            { Write-Host "OMP surfaces it as skill://herdr next session." }
+  "omp"            { Write-Host "OMP surfaces it as skill://herdr-plus next session." }
   "cursor"         { Write-Host "Cursor discovers it from .cursor\skills (also reads .agents\skills). Commit it to share." }
   "agents"         { Write-Host "Vendor-neutral .agents\skills — read by Cursor, Codex, and other Agent Skills tools." }
-  "dir"            { Write-Host "If your tool loads SKILL.md skills from that directory, it will pick up 'herdr'." }
+  "dir"            { Write-Host "If your tool loads SKILL.md skills from that directory, it will pick up 'herdr-plus'." }
 }

@@ -1,25 +1,25 @@
 #!/bin/sh
-# herdr-skill installer — download-agnostic, harness-agnostic.
+# herdr-plus installer — download-agnostic, harness-agnostic.
 #
 # Installs the `herdr` agent skill into the AI coding harness of your choice.
 # Works run locally from a checkout, or piped straight from GitHub:
 #
-#   curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.sh | sh
-#   curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.sh | sh -s -- --target claude --yes
+#   curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.sh | sh -s -- --target claude --yes
 #   ./install.sh --dir ~/my-tool/skills          # any SKILL.md-compatible tool
 #   ./install.sh --list
 #
 # Flags:
 #   -t, --target <name>   claude | claude-project | omp | portable
-#   -d, --dir <path>      install into <path>/herdr (any tool that loads SKILL.md skills)
+#   -d, --dir <path>      install into <path>/herdr-plus (any tool that loads SKILL.md skills)
 #   -y, --yes             don't prompt; overwrite an existing install
 #   -l, --list            list supported targets and exit
 #   -h, --help            show this help
 set -eu
 
-REPO="Sebastiangmz/herdr-skill"
+REPO="Sebastiangmz/herdr-plus"
 BRANCH="main"
-NAME="herdr"
+NAME="herdr-plus"
 RAW="https://raw.githubusercontent.com/$REPO/$BRANCH"
 TARBALL="https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz"
 
@@ -34,13 +34,13 @@ usage() { sed -n '2,26p' "$0" | sed 's/^#\{0,1\} \{0,1\}//'; }
 list_targets() {
   cat >&2 <<'EOF'
 Supported targets:
-  claude          Claude Code, global      -> ~/.claude/skills/herdr
-  claude-project  Claude Code, this repo   -> ./.claude/skills/herdr
-  omp             OMP / oh-my-pi, global   -> ~/.omp/agent/skills/herdr
-  cursor          Cursor, this repo        -> ./.cursor/skills/herdr
-  agents          Vendor-neutral, project  -> ./.agents/skills/herdr
-  portable        Tools without skills     -> ~/.herdr-skill  (+ paste-in instructions)
-  --dir <path>    Any SKILL.md-compatible  -> <path>/herdr
+  claude          Claude Code, global      -> ~/.claude/skills/herdr-plus
+  claude-project  Claude Code, this repo   -> ./.claude/skills/herdr-plus
+  omp             OMP / oh-my-pi, global   -> ~/.omp/agent/skills/herdr-plus
+  cursor          Cursor, this repo        -> ./.cursor/skills/herdr-plus
+  agents          Vendor-neutral, project  -> ./.agents/skills/herdr-plus
+  portable        Tools without skills     -> ~/.herdr-plus  (+ paste-in instructions)
+  --dir <path>    Any SKILL.md-compatible  -> <path>/herdr-plus
 EOF
 }
 
@@ -65,7 +65,7 @@ find_source() {
   else
     die "need curl or wget to download the skill"
   fi
-  # tarball extracts to herdr-skill-<branch>/
+  # tarball extracts to herdr-plus-<branch>/
   printf '%s' "$_tmp/$(basename "$REPO")-$BRANCH"
 }
 
@@ -144,7 +144,7 @@ case "$TARGET" in
 esac
 
 if [ "$TARGET" = portable ]; then
-  DEST="$HOME/.herdr-skill"
+  DEST="$HOME/.herdr-plus"
   YES=1  # portable location is ours; safe to refresh
   [ -e "$DEST" ] && rm -rf "$DEST"
   mkdir -p "$DEST/references" "$DEST/bin"
@@ -157,7 +157,7 @@ if [ "$TARGET" = portable ]; then
   log "instructions / rules file (e.g. AGENTS.md, .cursorrules, system prompt):"
   log ""
   log "  When operating Herdr (HERDR_ENV=1) or orchestrating agents in Herdr,"
-  log "  read the skill at ~/.herdr-skill/SKILL.md and follow it."
+  log "  read the skill at ~/.herdr-plus/SKILL.md and follow it."
   log ""
   exit 0
 fi
@@ -166,11 +166,11 @@ DEST=$(install_skill "$SRC" "$ROOT")
 log ""
 log "Installed the '$NAME' skill at: $DEST"
 case "$TARGET" in
-  claude)         log "Claude Code loads it automatically as the 'herdr' skill (new session).";;
-  claude-project) log "Claude Code loads it for this project (new session). Commit .claude/skills/herdr to share it.";;
-  omp)            log "OMP surfaces it as skill://herdr next session.";;
+  claude)         log "Claude Code loads it automatically as the 'herdr-plus' skill (new session).";;
+  claude-project) log "Claude Code loads it for this project (new session). Commit .claude/skills/herdr-plus to share it.";;
+  omp)            log "OMP surfaces it as skill://herdr-plus next session.";;
   cursor)         log "Cursor discovers it from .cursor/skills (also reads .agents/skills). Commit it to share.";;
   agents)         log "Vendor-neutral .agents/skills — read by Cursor, Codex, and other Agent Skills tools.";;
-  dir)            log "If your tool loads SKILL.md skills from that directory, it will pick up 'herdr'.";;
+  dir)            log "If your tool loads SKILL.md skills from that directory, it will pick up 'herdr-plus'.";;
 esac
 log "Verify the helper: $DEST/bin/herd.sh help"
