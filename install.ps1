@@ -39,7 +39,9 @@ Supported targets:
   claude          Claude Code, global      -> ~\.claude\skills\herdr
   claude-project  Claude Code, this repo   -> .\.claude\skills\herdr
   omp             OMP / oh-my-pi, global   -> ~\.omp\agent\skills\herdr
-  portable        Any other tool           -> ~\.herdr-skill  (+ paste-in instructions)
+  cursor          Cursor, this repo        -> .\.cursor\skills\herdr
+  agents          Vendor-neutral, project  -> .\.agents\skills\herdr
+  portable        Tools without skills     -> ~\.herdr-skill  (+ paste-in instructions)
   -Dir <path>     Any SKILL.md-compatible  -> <path>\herdr
 "@ | Write-Host
 }
@@ -80,14 +82,18 @@ if (-not $Target -and -not $Dir) {
   Write-Host "  1) Claude Code (global)   ~\.claude\skills"
   Write-Host "  2) Claude Code (project)  .\.claude\skills"
   Write-Host "  3) OMP / oh-my-pi         ~\.omp\agent\skills"
-  Write-Host "  4) Custom skills directory (any SKILL.md tool)"
-  Write-Host "  5) Portable + paste-in instructions (any other tool)"
-  switch (Read-Host "Choice [1-5]") {
+  Write-Host "  4) Cursor (project)       .\.cursor\skills"
+  Write-Host "  5) Vendor-neutral (project) .\.agents\skills"
+  Write-Host "  6) Custom skills directory (any SKILL.md tool)"
+  Write-Host "  7) Portable + paste-in instructions (any other tool)"
+  switch (Read-Host "Choice [1-7]") {
     "1" { $Target = "claude" }
     "2" { $Target = "claude-project" }
     "3" { $Target = "omp" }
-    "4" { $Dir = Read-Host "Skills directory path"; $Target = "dir" }
-    "5" { $Target = "portable" }
+    "4" { $Target = "cursor" }
+    "5" { $Target = "agents" }
+    "6" { $Dir = Read-Host "Skills directory path"; $Target = "dir" }
+    "7" { $Target = "portable" }
     default { throw "invalid choice" }
   }
 }
@@ -100,6 +106,8 @@ switch ($Target) {
   "claude"         { $root = Join-Path $home ".claude\skills" }
   "claude-project" { $root = Join-Path (Get-Location) ".claude\skills" }
   "omp"            { $root = Join-Path $home ".omp\agent\skills" }
+  "cursor"         { $root = Join-Path (Get-Location) ".cursor\skills" }
+  "agents"         { $root = Join-Path (Get-Location) ".agents\skills" }
   "dir"            { if (-not $Dir) { throw "-Dir requires a path" }; $root = $Dir }
   "portable"       { $root = $home }
   default          { throw "unknown target '$Target' (see -List)" }
@@ -130,5 +138,7 @@ switch ($Target) {
   "claude"         { Write-Host "Claude Code loads it automatically as the 'herdr' skill (new session)." }
   "claude-project" { Write-Host "Claude Code loads it for this project (new session)." }
   "omp"            { Write-Host "OMP surfaces it as skill://herdr next session." }
+  "cursor"         { Write-Host "Cursor discovers it from .cursor\skills (also reads .agents\skills). Commit it to share." }
+  "agents"         { Write-Host "Vendor-neutral .agents\skills — read by Cursor, Codex, and other Agent Skills tools." }
   "dir"            { Write-Host "If your tool loads SKILL.md skills from that directory, it will pick up 'herdr'." }
 }
