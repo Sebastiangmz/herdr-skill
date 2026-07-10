@@ -1,4 +1,4 @@
-# herdr-skill
+# herdr-plus
 
 An agent skill that teaches AI coding agents to operate the [Herdr](https://herdr.dev) terminal workspace runtime — manage sessions, workspaces, tabs and panes, and (the main use) **spawn and coordinate sub-agents inside Herdr spaces** through the `herdr` CLI over its local socket.
 
@@ -34,23 +34,23 @@ Download- and harness-agnostic. Pick your target; it fetches the skill and drops
 
 ```bash
 # interactive picker:
-curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.sh | sh
 # or non-interactive, choose a target:
-curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.sh | sh -s -- --target claude --yes
+curl -fsSL https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.sh | sh -s -- --target claude --yes
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-iex "& { $(irm https://raw.githubusercontent.com/Sebastiangmz/herdr-skill/main/install.ps1) } -Target claude -Yes"
+iex "& { $(irm https://raw.githubusercontent.com/Sebastiangmz/herdr-plus/main/install.ps1) } -Target claude -Yes"
 ```
 
-Targets (`--target` / `-Target`): `claude` (`~/.claude/skills`), `claude-project` (`./.claude/skills`), `omp` (`~/.omp/agent/skills`), `cursor` (`./.cursor/skills`), `agents` (`./.agents/skills` — the vendor-neutral location Cursor/Codex and other Agent Skills tools read), `portable` (`~/.herdr-skill` + a paste-in instruction line, for the rare tool that still doesn't auto-load skills). For any other SKILL.md-compatible tool, point it at your skills dir with `--dir <path>` / `-Dir <path>`. Run with `--list` / `-List` to see them, `--help` for usage.
+Targets (`--target` / `-Target`): `claude` (`~/.claude/skills`), `claude-project` (`./.claude/skills`), `omp` (`~/.omp/agent/skills`), `cursor` (`./.cursor/skills`), `agents` (`./.agents/skills` — the vendor-neutral location Cursor/Codex and other Agent Skills tools read), `portable` (`~/.herdr-plus` + a paste-in instruction line, for the rare tool that still doesn't auto-load skills). For any other SKILL.md-compatible tool, point it at your skills dir with `--dir <path>` / `-Dir <path>`. Run with `--list` / `-List` to see them, `--help` for usage.
 
 ### Other ways
 
-- **`skills` CLI (global, supported agents):** `npx skills add Sebastiangmz/herdr-skill --skill herdr -g`
-- **Manual clone:** copy this repo into your skills directory as `herdr/` (so the tool resolves the `herdr` skill from `SKILL.md` frontmatter).
+- **`skills` CLI (global, supported agents):** `npx skills add Sebastiangmz/herdr-plus --skill herdr-plus -g`
+- **Manual clone:** copy this repo into your skills directory as `herdr-plus/` (so the tool resolves the `herdr-plus` skill from `SKILL.md` frontmatter).
 
 ## Verified
 

@@ -1,9 +1,9 @@
 ---
-name: herdr
+name: herdr-plus
 description: "Operate the Herdr terminal workspace runtime from inside it — manage sessions, workspaces, tabs and panes, and (the main use) spawn, place, and coordinate sub-agents in Herdr spaces via the `herdr` CLI over the local socket. Use this whenever HERDR_ENV=1, or whenever the task involves splitting panes, creating workspaces/tabs, dispatching or fanning out multiple coding agents (claude, codex, pi, omp, hermes…) into separate Herdr panes and coordinating them, waiting for an agent to finish or become blocked, running a server/test in a sibling pane, or reading another pane's terminal output — even if the user only says 'run this in another pane', 'spin up an agent to do X', 'have an agent handle Y while I…', or 'watch that build/log'."
 ---
 
-# herdr
+# herdr-plus
 
 Herdr is a terminal workspace manager for AI coding agents: a background **server** owns real terminal processes, **clients** attach to render them, and a local **socket API** lets scripts and agents drive it. The `herdr` binary in `PATH` talks to that server. Verified against **herdr 0.7.0** (protocol 14).
 
