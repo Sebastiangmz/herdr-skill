@@ -89,7 +89,7 @@ Read-only/JSON commands are safe to run freely; process-launching and `close` co
 
 | Area | Commands |
 |------|----------|
-| Status | `status [server\|client]`, `api schema [--json]`, `api snapshot` |
+| Status | `status [server\|client]`, `server stop` |
 | Sessions | `session list/attach/stop/delete` |
 | Workspaces | `workspace list/create/get/focus/rename/close` |
 | Worktrees | `worktree list/create/open/remove` (git checkout as workspace) |
