@@ -14,6 +14,8 @@ You are one pane. Every other unit of work — a sub-agent, a dev server, a test
 
 Choose the **smallest** scope that keeps the work legible. Fan-out across workspaces when jobs are truly independent; keep them in tabs when you'll be reading them together.
 
+> **Layout discipline (mandatory) —** alternate split direction (vertical `right` → horizontal `down` → vertical → …) and keep **≤ 4 panes per tab (2×2)**; the 5th space goes in a new tab of the same workspace. `bin/herd.sh spawn`/`split` enforce both automatically (odd pane-count → `right`, even → `down`; spill to a new tab at `HERD_MAX_PANES`, default 4). Prefer `herd.sh` over raw `herdr` for fan-out; if you call `herdr` directly, obey these rules by hand. See SKILL.md → "Layout discipline".
+
 ## `agent start` vs `pane split` + `pane run`
 
 - **`agent start <name> … -- <argv>`** when the process is a coding agent you want to *track as an agent*: it appears in `agent list` by `name`, is waitable via `wait agent-status`, readable/sendable by name, and directly attachable. Id at `result.agent.pane_id`. It targets a workspace/tab (`--workspace`, `--tab`, `--split`), **not** a specific `--pane`.
@@ -26,7 +28,7 @@ Both are "spaces". The difference is whether Herdr's agent machinery (state roll
 ### 1. Spawn a sub-agent and hand it a task
 
 ```bash
-J=$(herdr agent start reviewer --tab "$HERDR_TAB_ID" --split down --no-focus -- claude)
+J=$(herdr agent start reviewer --tab "$HERDR_TAB_ID" --split right --no-focus -- claude)   # 1st split → vertical
 P=$(printf '%s' "$J" | python3 -c 'import sys,json;print(json.load(sys.stdin)["result"]["agent"]["pane_id"])')
 herdr wait output "$P" --match ">" --timeout 15000        # wait for its prompt
 herdr pane run "$P" "review test coverage in src/api/ and list the top 3 gaps"

@@ -38,7 +38,7 @@ session ─▶ workspace ─▶ tab ─▶ pane ─▶ (agent)
 - **session** — server namespace. `herdr` attaches the default one; named sessions are separate runtimes with their own socket. Most work is the default session.
 - **workspace** — project-level container (one per repo/task). Sidebar rolls agent state up per workspace.
 - **tab** — a layout/subcontext inside a workspace (e.g. `agents`, `logs`, `server`).
-- **pane** — a real terminal. Split right/down. **This is your "space" for another agent or process.**
+- **pane** — a real terminal. Split right (vertical) / down (horizontal). **This is your "space" for another agent or process.** Splitting obeys the [Layout discipline](#️-layout-discipline-mandatory): alternate direction, max 4 per tab.
 - **agent** — a process Herdr recognizes in a pane. `agent_status ∈ {working, blocked, done, idle, unknown}`. State rolls up: a `blocked` agent turns its pane/tab/workspace blocked in the sidebar. **Verified: when an agent goes from `working` to `idle`, Herdr surfaces it as `done`** (finished-but-unviewed) until you view the pane — so fan-in on **`done`**, not `idle`. Records from `agent list`/`agent get` carry `agent` (the type, e.g. `omp`, `claude`) and, only when you named it via `agent start <name>`/`agent rename`, a `name`. **Detected agents have no `name`** — resolve/parse with `name` if present else `agent`. `agent list` is **global**: it includes the human's own agents in other workspaces; never treat those as yours.
 
 ## ⚠️ The id rule (most common failure)
@@ -66,6 +66,22 @@ Verified: `herdr pane split --current …` fell back to the **UI-focused** pane 
 ```bash
 herdr pane split --pane "$HERDR_PANE_ID" --direction down --no-focus   # ✔ lands in YOUR tab
 ```
+
+## ⚠️ Layout discipline (MANDATORY)
+
+You **MUST** keep spaces legible. Two hard rules, enforced by `bin/herd.sh` and REQUIRED of any hand-rolled `herdr` calls:
+
+1. **Alternate the split direction.** NEVER stack every new pane the same way — that produces one cramped strip (the classic mistake). Split **vertical first (`--direction right`, side-by-side columns), then horizontal (`--direction down`, stacked rows), then vertical, then horizontal…**, alternating on every split so panes tile into a grid. Derive it from the target tab's pane count: **odd count → `right` (vertical), even → `down` (horizontal)**. `herd.sh` does this automatically; pass `--split`/`--direction` only to override a single call.
+2. **Cap at 4 panes per tab, then open a NEW tab.** A tab holds **at most 4 panes (a 2×2 grid)** — beyond that terminals get unreadably small. The **5th** space MUST go in a **new tab of the same workspace** (`herdr tab create --workspace "$HERDR_WORKSPACE_ID" --no-focus`), never a 5th split. Keep **one workspace per page/repo/task**; grow by adding tabs, then workspaces — never a wall of tiny panes. `herd.sh spawn`/`split` perform this spill automatically (tunable via `HERD_MAX_PANES`, default 4).
+
+| Pane count in tab before this split | Direction | Result |
+|---|---|---|
+| 1 | `right` (vertical) | 2 columns |
+| 2 | `down` (horizontal) | fills a row |
+| 3 | `right` (vertical) | completes the 2×2 |
+| ≥ 4 | — | **spill to a new tab** |
+
+Because `herd.sh` encodes both rules, prefer it over raw `herdr agent start`/`pane split` for any fan-out. If you must call `herdr` directly, you are still bound by the two rules above.
 
 ## Command map (what you can drive)
 
@@ -120,7 +136,7 @@ Place work in your own tab with `--tab "$HERDR_TAB_ID"`, or give it a fresh spac
 
 ```bash
 # 1) spawn a claude agent in a new pane in your tab, keep your focus
-J=$(herdr agent start reviewer --tab "$HERDR_TAB_ID" --split down --no-focus -- claude)
+J=$(herdr agent start reviewer --tab "$HERDR_TAB_ID" --split right --no-focus -- claude)   # 1st split → vertical
 P=$(printf '%s' "$J" | python3 -c 'import sys,json;print(json.load(sys.stdin)["result"]["agent"]["pane_id"])')
 
 # 2) wait for its prompt, then send the task
@@ -135,10 +151,10 @@ herdr pane read "$P" --source recent --lines 120
 **Fan-out / fan-in** (dispatch several, wait for all): see the loop in [`references/orchestration.md`](references/orchestration.md). The bundled helper does the id-parsing and placement for you:
 
 ```bash
-# spawn an agent, print its pane id (parses agent.pane_id, places in your tab by default)
+# spawn an agent, print its pane id (auto direction + 4-per-tab cap, places in your tab)
 PANE=$(bin/herd.sh spawn reviewer -- claude)
-# split your pane, run a command, print the new pane id (parses pane.pane_id)
-PANE=$(bin/herd.sh split --direction down -- "npm run dev")
+# split your pane, run a command, print the new pane id (auto direction unless overridden)
+PANE=$(bin/herd.sh split -- "npm run dev")
 # wait for one or more targets to reach a status
 bin/herd.sh await --status done --timeout 600000 "$PANE_A" "$PANE_B"
 ```
